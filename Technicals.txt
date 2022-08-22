@@ -1,0 +1,11 @@
+Statistics
+-Skewness
+-Kurtosis
+-Jarque Bera test
+
+
+Ratios
+-Sharpe ratio
+-max Drawdown
+-VaR
+-Expected loss beyond VaR
