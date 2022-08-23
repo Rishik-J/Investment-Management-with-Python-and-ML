@@ -8,4 +8,12 @@ Ratios
 -Sharpe ratio
 -max Drawdown
 -VaR
+    -VaR Historic
+    -Gaussion Var
+    -Beyond Var
 -Expected loss beyond VaR
+
+
+Python
+-Indexing with pandas
+-Module Creation
