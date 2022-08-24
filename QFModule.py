@@ -3,6 +3,7 @@ import numpy as np
 import scipy.stats as stats 
 from scipy.stats import norm
 
+
 def drawdown(return_series: pd.Series):
     wealth_index = 1000 * (1+ return_series).cumprod()
     previous_peaks = wealth_index.cummax()
@@ -12,6 +13,8 @@ def drawdown(return_series: pd.Series):
         "Peaks": previous_peaks,
         "Drawdown": drawdowns
     })
+
+
 
 def get_ffme_returns():
     me_m = pd.read_csv('data/Portfolios_Formed_on_ME_monthly_EW.csv',                      header = 0,
@@ -23,6 +26,9 @@ def get_ffme_returns():
     returns.index = pd.to_datetime(returns.index, format = "%Y%m").to_period('M')
     return returns
 
+
+
+
 def get_hifi_returns():
     """
     Load and format the EDHEC Hedge Fund Index Returns
@@ -33,6 +39,39 @@ def get_hifi_returns():
     
     return hfi
 
+
+
+
+def annualize_returns(r, periods_per_year):
+    """
+    Annualizes a set of returns
+    based on periods per year
+    """
+    compounded_growth = (1+r).prod()
+    n_periods = r.shape[0]
+    return compounded_growth**(periods_per_year/n_periods)-1
+
+
+def annualize_volatility(r, periods_per_year):
+    """
+    Annualizes the vol of a set of returns
+    based onthe periods per year
+    """
+    return r.std()*(periods_per_year**0.5)
+
+
+def sharpe_ratio(r, riskfree_rate, periods_per_year):
+    """
+    Computes the annualized sharpe ratio of a set of returns
+    """
+    # convert the annual riskfree rate to per period
+    rf_per_period = (1+riskfree_rate)**(1/periods_per_year)-1
+    excess_ret = r - rf_per_period
+    ann_ex_ret = annualize_rets(excess_ret, periods_per_year)
+    ann_vol = annualize_vol(r, periods_per_year)
+    return ann_ex_ret/ann_vol
+
+
 #Filtering returns less then 0 then computing std (using boolean mask)
 def semidiviation(r):
     """
@@ -40,6 +79,8 @@ def semidiviation(r):
     """
     is_negative = r<0
     return r[is_negative].std(ddof=0)
+
+
 
 #defining skewness fucntion: input is a series or dataframe
 def skewness(r):
@@ -54,6 +95,8 @@ def skewness(r):
     return exp/sigma_r**3 
 
 
+
+
 #defining Kurtosis fucntion: input is a series or dataframe
 def kurtosis(r):
     """
@@ -66,6 +109,8 @@ def kurtosis(r):
     exp = (demeaned_r**4).mean()
     return exp/sigma_r**4 
 
+
+
 #Defing a is_normal fucniton: input is a series or dataframe
 def is_normal(r, level=0.01):
     '''
@@ -73,6 +118,8 @@ def is_normal(r, level=0.01):
     '''
     statistic, p_value = stats.jarque_bera(r)
     return p_value > level
+
+
 
 #Defiing calculating historic VaR: input is a series or dataframe
 def var_historic(r, level=5):
@@ -88,6 +135,9 @@ def var_historic(r, level=5):
     else:
         raise TypeError("Expected r to be a series or dataframe")
 
+        
+        
+        
 #Defining calculating Parametric VaR: input is a series or dataframe
 def var_gaussian(r, level=5):
     """
@@ -96,6 +146,9 @@ def var_gaussian(r, level=5):
     #Commpute the Z score assuming it was Gaussian
     z = norm.ppf(level/100)
     return -(r.mean() + z * r.std(ddof=0))
+
+
+
 
 #Defining calculating Cornish-Fisher VaR: input is a series or dataframe
 def var_CornishFisher(r, level=5, modified=False):
@@ -113,6 +166,8 @@ def var_CornishFisher(r, level=5, modified=False):
         
         
     return -(r.mean() + z * r.std(ddof=0))
+
+
 
 def cvar_historic(r, level=5):
     """
