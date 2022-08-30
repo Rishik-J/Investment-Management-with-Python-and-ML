@@ -180,23 +180,3 @@ def cvar_historic(r, level=5):
         return r.aggregate(cvar_historic, level=level)
     else:
         raise TypeError("Expected r to be a Series or DataFrame")
-        
-        
-        
-
-        
-        
-
-        
-def portfolio_return(weigths, returns):
-    """
-    Using weigths to get returns
-    Transposes weights and matrix multies with returns
-    """
-    return weights.T @ returns
-
-def portfolio_volatility(weights, covMatrix):
-    """
-    usign weights and covarience matrix to get volatilaty
-    """
-    return weights.T @ covMatrix @ weights
